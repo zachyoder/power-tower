@@ -2,7 +2,7 @@ import time
 import struct
 import serial
 
-def open_controller(port_array):
+def open_controller(port_array, calibrate):
     """
     Author: J. Fiene, 2023
     Last updated: Z. Yoder, 6 November 2024
@@ -10,7 +10,8 @@ def open_controller(port_array):
     Description: This function opens an arbitrary number of serial ports.
 
     Parameters:
-    port_array: List of port names (e.g., ['COM1', 'COM2', ..., 'COMN'])
+    port_array: (lis) Port names (e.g., ['COM1', 'COM2', ..., 'COMN'])
+    calibrate: (bool) Should the boards be calibrated (voltage must be off)
 
     Returns:
     handle_array: List of serial port handles
@@ -21,9 +22,12 @@ def open_controller(port_array):
     for port in port_array:
         handle = serial.Serial(port, baudrate=9600)  # open serial port
         handle_array.append(handle)
+
+        # Send calibration command
+        if calibrate:
+            tx(handle, 'C')   # calibrate with zero voltage
         
-        # Send calibration and configuration commands
-        tx(handle, 'C')       # calibrate with zero voltage
+        # Send configuration commands
         tx(handle, 'F', 900)  # set ADC filter
         tx(handle, 'A', 747)  # set ADC scale
         tx(handle, 'D', 50)   # set deadband
