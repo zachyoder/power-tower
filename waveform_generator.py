@@ -61,3 +61,5 @@ def build_sine(sample_rate, frequency, max_voltage):
     output_vector = max_voltage*(1/2)*(1 + np.sin(np.linspace(
         -np.pi/2, (3/2)*np.pi, int(sample_rate/frequency)
     )))
+
+    return output_vector
